@@ -1,4 +1,4 @@
-package com.apnamart.feature_auth
+package com.apnamart.feature_auth.presentation
 
 
 import androidx.compose.foundation.layout.Arrangement
@@ -20,17 +20,19 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.apnamart.feature_auth.common.LoginEvent
 
 @Composable
 fun LoginScreen(
-    viewModel: RegisterViewModel = hiltViewModel(),
+    viewModel: UserAuthViewModel = hiltViewModel(),
     onLoginSuccess: () -> Unit,
     gotoRegistration: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsState()
+    val internet by viewModel.isConnected.collectAsState()
 
     LaunchedEffect(state.isLoading) {
         if (!state.isLoading && state.error == null &&
@@ -52,6 +54,9 @@ fun LoginScreen(
                 .padding(24.dp),
             verticalArrangement = Arrangement.Center
         ) {
+            if(internet.not()){
+                Text("Please check Internet connection", color = Color.Red, modifier = Modifier.padding(16.dp))
+            }
 
             Text(
                 text = "Welcome Back",
@@ -94,7 +99,9 @@ fun LoginScreen(
             Spacer(Modifier.height(24.dp))
 
             Button(
-                onClick = { viewModel.onEvent(LoginEvent.LoginClicked) },
+                onClick = {
+                    viewModel.onEvent(LoginEvent.LoginClicked)
+                },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !state.isLoading
             ) {

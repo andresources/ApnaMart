@@ -1,6 +1,6 @@
-package com.apnamart.data.remote
+package com.apnamart.feature_auth.data.remote
 
-import com.apnamart.data.remote.dto.RegisterDto
+import com.apnamart.feature_auth.data.remote.dto.RegisterDto
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST

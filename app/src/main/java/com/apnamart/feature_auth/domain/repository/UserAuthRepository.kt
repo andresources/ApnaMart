@@ -1,10 +1,10 @@
-package com.apnamart.domain.repository
+package com.apnamart.feature_auth.domain.repository
 
 import com.apnamart.core.common.UiState
-import com.apnamart.domain.model.RegisterResult
+import com.apnamart.feature_auth.domain.model.RegisterResult
 import kotlinx.coroutines.flow.Flow
 
-interface UserRepository {
+interface UserAuthRepository {
     fun registerUser(
         name: String,
         address: String,

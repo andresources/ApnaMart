@@ -1,12 +1,12 @@
-package com.apnamart.domain.usecase
+package com.apnamart.feature_auth.domain.usecase
 
 import com.apnamart.core.common.UiState
-import com.apnamart.domain.model.RegisterResult
-import com.apnamart.domain.repository.UserRepository
+import com.apnamart.feature_auth.domain.model.RegisterResult
+import com.apnamart.feature_auth.domain.repository.UserAuthRepository
 import kotlinx.coroutines.flow.Flow
 
 class RegisterUserUseCase(
-    private val repository: UserRepository
+    private val repository: UserAuthRepository
 ) {
     operator fun invoke(
         name: String,

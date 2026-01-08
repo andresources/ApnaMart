@@ -1,16 +1,18 @@
-package com.apnamart.data.remote.repository
+package com.apnamart.feature_auth.data.remote.repository
 
 import com.apnamart.core.common.UiState
 import com.apnamart.core.common.safeFlowCall
-import com.apnamart.data.remote.UserApi
-import com.apnamart.data.remote.mapper.toDomain
-import com.apnamart.domain.model.RegisterResult
-import com.apnamart.domain.repository.UserRepository
+import com.apnamart.core.network.di.NetworkMonitor
+import com.apnamart.feature_auth.data.remote.UserApi
+import com.apnamart.feature_auth.data.remote.mapper.toDomain
+import com.apnamart.feature_auth.domain.model.RegisterResult
+import com.apnamart.feature_auth.domain.repository.UserAuthRepository
 import kotlinx.coroutines.flow.Flow
 
-class UserRepositoryImpl(
+class UserAuthRepositoryImpl(
     private val api: UserApi,
-) : UserRepository {
+    private val networkMonitor: NetworkMonitor
+) : UserAuthRepository {
 
     override fun registerUser(
         name: String,
@@ -20,7 +22,7 @@ class UserRepositoryImpl(
         password: String
     ): Flow<UiState<RegisterResult>> {
 
-        return safeFlowCall {
+        return safeFlowCall(networkMonitor) {
             api.registerUser(
                 name, address, phone, email, password
             ).toDomain()
@@ -32,12 +34,10 @@ class UserRepositoryImpl(
         password: String
     ): Flow<UiState<RegisterResult>> {
 
-        return safeFlowCall {
+        return safeFlowCall(networkMonitor) {
             api.loginUser(
                 login, password
             ).toDomain()
         }
     }
-
-
 }

@@ -1,16 +1,15 @@
-package com.apnamart.feature_auth
+package com.apnamart.feature_auth.presentation
 
-import android.util.Log
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.apnamart.core.common.UiState
+import com.apnamart.core.network.di.NetworkMonitor
+import com.apnamart.core.presentation.BaseViewModel
 import com.apnamart.data.local.AuthLocalDataSource
-import com.apnamart.domain.model.RegisterResult
-import com.apnamart.domain.usecase.RegisterUserUseCase
 import com.apnamart.feature_auth.common.LoginEvent
 import com.apnamart.feature_auth.common.LoginUiState
 import com.apnamart.feature_auth.common.RegisterEvent
 import com.apnamart.feature_auth.common.RegisterUiState
+import com.apnamart.feature_auth.domain.usecase.RegisterUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,10 +18,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class RegisterViewModel @Inject constructor(
+class UserAuthViewModel @Inject constructor(
     private val registerUserUseCase: RegisterUserUseCase,
     private val authPreferences: AuthLocalDataSource,
-) : ViewModel() {
+    networkMonitor: NetworkMonitor,
+) : BaseViewModel(networkMonitor) {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState = _uiState.asStateFlow()
 
@@ -60,13 +60,12 @@ class RegisterViewModel @Inject constructor(
             is RegisterEvent.PasswordChanged ->
                 _uiRState.update { it.copy(password = event.value) }
 
-            RegisterEvent.Submit -> register()
+            RegisterEvent.Submit -> if(isConnected.value){ register() }
         }
     }
 
     fun register() {
         val state = _uiRState.value
-
        /* if (state.name.isBlank() ||
             state.phone.length < 10 ||
             !android.util.Patterns.EMAIL_ADDRESS.matcher(state.email).matches()

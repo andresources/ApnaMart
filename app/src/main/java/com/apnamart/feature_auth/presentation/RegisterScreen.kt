@@ -1,4 +1,4 @@
-package com.apnamart.feature_auth
+package com.apnamart.feature_auth.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,13 +21,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.apnamart.core.common.UiState
-import com.apnamart.domain.model.RegisterResult
 import com.apnamart.feature_auth.common.RegisterEvent
 
 @Composable
 fun RegisterScreen(
-    viewModel: RegisterViewModel = hiltViewModel(),
+    viewModel: UserAuthViewModel = hiltViewModel(),
     onRegisterSuccess: () -> Unit
 ) {
     val state by viewModel.uiRState.collectAsState()
