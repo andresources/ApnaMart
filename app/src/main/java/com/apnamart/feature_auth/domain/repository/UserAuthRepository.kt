@@ -17,4 +17,9 @@ interface UserAuthRepository {
         login: String,
         password: String
     ): Flow<UiState<RegisterResult>>
+
+    fun forgotPassword(
+        user_email: String,
+        new_password: String
+    ): Flow<UiState<RegisterResult>>
 }

@@ -23,23 +23,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.apnamart.feature_auth.common.ForgotPasswordEvent
+import com.apnamart.feature_auth.common.ForgotPasswordUiState
 import com.apnamart.feature_auth.common.LoginEvent
 
 @Composable
-fun LoginScreen(
+fun ForgotPasswordScreen(
     viewModel: UserAuthViewModel = hiltViewModel(),
-    onLoginSuccess: () -> Unit,
-    gotoRegistration: () -> Unit,
-    gotoForgotPassword: ()-> Unit
+    onChangedSuccess: () -> Unit,
+    gotoRegistration: () -> Unit
 ) {
-    val state by viewModel.uiState.collectAsState()
+    val state by viewModel.uiFPState.collectAsState()
     val internet by viewModel.isConnected.collectAsState()
 
     LaunchedEffect(state.isLoading) {
-        if (!state.isLoading && state.error == null && state.emailOrPhone.isNotBlank()
+        if (!state.isLoading && state.error == null &&
+            state.email.isNotBlank()
         ) {
             if(state.isSuccess){
-                onLoginSuccess()
+                onChangedSuccess()
             }
         }
     }
@@ -66,16 +68,16 @@ fun LoginScreen(
             Spacer(Modifier.height(8.dp))
 
             Text(
-                text = "Login to continue",
+                text = "ForgotPassword to continue",
                 style = MaterialTheme.typography.bodyMedium
             )
 
             Spacer(Modifier.height(24.dp))
 
             OutlinedTextField(
-                value = state.emailOrPhone,
+                value = state.email,
                 onValueChange = {
-                    viewModel.onEvent(LoginEvent.EmailChanged(it))
+                    viewModel.onEvent(ForgotPasswordEvent.EmailChanged(it))
                 },
                 label = { Text("Email or Phone") },
                 singleLine = true,
@@ -85,9 +87,9 @@ fun LoginScreen(
             Spacer(Modifier.height(12.dp))
 
             OutlinedTextField(
-                value = state.password,
+                value = state.newpassword,
                 onValueChange = {
-                    viewModel.onEvent(LoginEvent.PasswordChanged(it))
+                    viewModel.onEvent(ForgotPasswordEvent.NewPasswordChanged(it))
                 }
             )
 
@@ -100,7 +102,7 @@ fun LoginScreen(
 
             Button(
                 onClick = {
-                    viewModel.onEvent(LoginEvent.LoginClicked)
+                    viewModel.onEvent(ForgotPasswordEvent.SubmitClicked)
                 },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !state.isLoading
@@ -111,21 +113,14 @@ fun LoginScreen(
                         strokeWidth = 2.dp
                     )
                 } else {
-                    Text("Login")
+                    Text("Submit")
                 }
             }
             Button(
                 onClick = gotoRegistration,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                    Text("Register")
-
-            }
-            Button(
-                onClick = gotoForgotPassword,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text("Forgot Password")
+                Text("Register")
 
             }
         }

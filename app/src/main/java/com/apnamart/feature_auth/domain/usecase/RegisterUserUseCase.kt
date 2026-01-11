@@ -28,4 +28,13 @@ class RegisterUserUseCase(
             login, password
         )
     }
+
+    fun invokeFP(
+        user_email: String,
+        new_password: String
+    ): Flow<UiState<RegisterResult>> {
+        return repository.forgotPassword(
+            user_email, new_password
+        )
+    }
 }

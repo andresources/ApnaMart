@@ -5,8 +5,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.apnamart.feature_auth.presentation.ForgotPasswordScreen
 import com.apnamart.feature_auth.presentation.LoginScreen
 import com.apnamart.feature_auth.presentation.RegisterScreen
+import com.apnamart.feature_category.presentation.CategoryScreen
 import com.apnamart.feature_home.HomeScreen
 import com.apnamart.feature_splash.SplashScreen
 
@@ -32,6 +34,9 @@ fun AppNavGraph(
                 },
                 gotoRegistration = {
                     navController.navigate("register")
+                },
+                gotoForgotPassword = {
+                    navController.navigate("forgot")
                 }
             )
         }
@@ -45,9 +50,23 @@ fun AppNavGraph(
                 }
             )
         }
+        composable("forgot") {
+            ForgotPasswordScreen(
+                onChangedSuccess = {
+                    navController.navigate("home") {
+                        popUpTo("register") { inclusive = true }
+                    }
+                },
+                gotoRegistration = {
+
+                }
+            )
+        }
+
 
         composable("home") {
-            HomeScreen("App")
+           // HomeScreen("App")
+            CategoryScreen()
         }
     }
 }

@@ -23,4 +23,11 @@ interface UserApi {
         @Field("login") login: String,
         @Field("user_password") password: String
     ): RegisterDto
+
+    @FormUrlEncoded
+    @POST("ApartmentPrj/forgotPassword.php")
+    suspend fun forgotPassword(
+        @Field("user_email") user_email: String,
+        @Field("new_password") new_password: String
+    ): RegisterDto
 }

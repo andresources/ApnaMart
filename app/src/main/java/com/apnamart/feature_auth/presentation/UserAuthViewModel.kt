@@ -5,6 +5,8 @@ import com.apnamart.core.common.UiState
 import com.apnamart.core.network.di.NetworkMonitor
 import com.apnamart.core.presentation.BaseViewModel
 import com.apnamart.data.local.AuthLocalDataSource
+import com.apnamart.feature_auth.common.ForgotPasswordEvent
+import com.apnamart.feature_auth.common.ForgotPasswordUiState
 import com.apnamart.feature_auth.common.LoginEvent
 import com.apnamart.feature_auth.common.LoginUiState
 import com.apnamart.feature_auth.common.RegisterEvent
@@ -28,6 +30,9 @@ class UserAuthViewModel @Inject constructor(
 
     private val _uiRState = MutableStateFlow(RegisterUiState())
     val uiRState = _uiRState.asStateFlow()
+
+    private val _uiFPState = MutableStateFlow(ForgotPasswordUiState())
+    val uiFPState = _uiFPState.asStateFlow()
 
     fun onEvent(event: LoginEvent) {
         when (event) {
@@ -61,6 +66,20 @@ class UserAuthViewModel @Inject constructor(
                 _uiRState.update { it.copy(password = event.value) }
 
             RegisterEvent.Submit -> if(isConnected.value){ register() }
+        }
+    }
+
+    fun onEvent(event: ForgotPasswordEvent) {
+        when (event) {
+            is ForgotPasswordEvent.EmailChanged ->
+                _uiFPState.update {
+                    it.copy(email = event.value, error = null)
+                }
+
+            is ForgotPasswordEvent.NewPasswordChanged ->
+                _uiFPState.update { it.copy(newpassword = event.value, error = null) }
+
+            ForgotPasswordEvent.SubmitClicked -> forgotPassword()
         }
     }
 
@@ -128,6 +147,38 @@ class UserAuthViewModel @Inject constructor(
 
                     is UiState.Error ->{
                         _uiState.update { it.copy(isLoading = false,isSuccess = false, error = result.message) }
+                    }
+                }
+            }
+        }
+    }
+
+    fun forgotPassword() {
+        val state = _uiFPState.value
+        if (state.email.isBlank() || state.newpassword.isBlank()) {
+            _uiFPState.update { it.copy(error = "All fields required") }
+            return
+        }
+        viewModelScope.launch {
+            registerUserUseCase.invokeFP(
+                state.email, state.newpassword
+            ).collect { result ->
+                when (result) {
+                    is UiState.Loading ->{
+                        _uiFPState.update { it.copy(isLoading = true) }
+                    }
+
+                    is UiState.Success ->{
+                        if(result.data.status){
+                            _uiFPState.update { it.copy(isLoading = false, isSuccess = true) }
+                            authPreferences.saveUser(state.email)
+                        }else{
+                            _uiFPState.update { it.copy(isLoading = false, isSuccess = false, error = result.data.message) }
+                        }
+                    }
+
+                    is UiState.Error ->{
+                        _uiFPState.update { it.copy(isLoading = false,isSuccess = false, error = result.message) }
                     }
                 }
             }

@@ -40,4 +40,15 @@ class UserAuthRepositoryImpl(
             ).toDomain()
         }
     }
+
+    override fun forgotPassword(
+        user_email: String,
+        new_password: String
+    ): Flow<UiState<RegisterResult>> {
+        return safeFlowCall(networkMonitor) {
+            api.forgotPassword(
+                user_email, new_password
+            ).toDomain()
+        }
+    }
 }
