@@ -4,5 +4,7 @@ data class CategoryItemDto(
     val id: Int,
     val title: String,
     val image_url: String,
-    val category_id: Int
+    val category_id: Int,
+    val original_price: Int,
+    val offer_price: Int
 )

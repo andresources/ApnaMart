@@ -125,7 +125,7 @@ fun UserProfileScreen(
                     strokeWidth = 2.dp
                 )
             } else {
-                Text("Login")
+                Text("Update Profile")
             }
         }
     }

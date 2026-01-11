@@ -18,6 +18,8 @@ fun CategoryItemDto.toDomain(): CategoryItem {
         id = id,
         title = title,
         imageUrl = image_url,
-        categoryId = category_id
+        categoryId = category_id,
+        offer_price= offer_price,
+        original_price = original_price
     )
 }

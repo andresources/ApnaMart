@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -29,7 +30,7 @@ fun HomeScreen(name: String, modifier: Modifier = Modifier,viewModel: UserScoreV
 
     Scaffold(
         containerColor = Color.Blue,
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.safeContentPadding().fillMaxSize(),
         topBar = { Text("Apna App")}
     ) { innerPadding ->
         Box(
