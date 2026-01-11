@@ -20,7 +20,7 @@ import com.apnamart.feature_auth.presentation.UserAuthViewModel
 import com.apnamart.feature_home.presentation.UserScoreViewModel
 
 @Composable
-fun HomeScreen(name: String, modifier: Modifier = Modifier,viewModel: UserScoreViewModel = hiltViewModel(),) {
+fun HomeScreen(name: String, modifier: Modifier = Modifier,viewModel: UserScoreViewModel = hiltViewModel(),goProfile: () -> Unit,goCategory: () -> Unit) {
     val state by viewModel.uiState.collectAsState()
     val internet by viewModel.isConnected.collectAsState()
     LaunchedEffect(Unit){
@@ -46,8 +46,15 @@ fun HomeScreen(name: String, modifier: Modifier = Modifier,viewModel: UserScoreV
                 }) {
                     Text("Submit")
                 }
-            }
 
+                Button(onClick = goProfile ) {
+                    Text("Profile")
+                }
+
+                Button(onClick = goCategory) {
+                    Text("Category")
+                }
+            }
         }
     }
 }

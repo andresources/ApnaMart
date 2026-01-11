@@ -1,5 +1,6 @@
 package com.apnamart.feature_auth.presentation
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.apnamart.core.common.UiState
 import com.apnamart.core.network.di.NetworkMonitor
@@ -9,6 +10,8 @@ import com.apnamart.feature_auth.common.ForgotPasswordEvent
 import com.apnamart.feature_auth.common.ForgotPasswordUiState
 import com.apnamart.feature_auth.common.LoginEvent
 import com.apnamart.feature_auth.common.LoginUiState
+import com.apnamart.feature_auth.common.ProfileEvent
+import com.apnamart.feature_auth.common.ProfileUiState
 import com.apnamart.feature_auth.common.RegisterEvent
 import com.apnamart.feature_auth.common.RegisterUiState
 import com.apnamart.feature_auth.domain.usecase.RegisterUserUseCase
@@ -34,6 +37,9 @@ class UserAuthViewModel @Inject constructor(
     private val _uiFPState = MutableStateFlow(ForgotPasswordUiState())
     val uiFPState = _uiFPState.asStateFlow()
 
+    private val _uiProfileState = MutableStateFlow(ProfileUiState())
+    val uiProfileState = _uiProfileState.asStateFlow()
+
     fun onEvent(event: LoginEvent) {
         when (event) {
             is LoginEvent.EmailChanged ->
@@ -45,6 +51,29 @@ class UserAuthViewModel @Inject constructor(
                 _uiState.update { it.copy(password = event.value, error = null) }
 
             LoginEvent.LoginClicked -> loginUser()
+        }
+    }
+
+    fun onEvent(event: ProfileEvent) {
+        when (event) {
+            is ProfileEvent.UsernameChanged ->
+                _uiProfileState.update {
+                    it.copy(user_name = event.value, error = null)
+                }
+
+            is ProfileEvent.UserAddressChanged ->
+                _uiProfileState.update { it.copy(user_address = event.value, error = null) }
+
+            is ProfileEvent.UserPhoneNumberChanged ->
+                _uiProfileState.update { it.copy(user_phone_number = event.value, error = null) }
+
+            is ProfileEvent.UserEmailChanged ->
+                _uiProfileState.update { it.copy(user_email = event.value, error = null) }
+
+            is ProfileEvent.UserPasswordChanged ->
+                _uiProfileState.update { it.copy(user_password = event.value, error = null) }
+
+            ProfileEvent.UpdateProfileClicked -> updateUserProfile()
         }
     }
 
@@ -179,6 +208,55 @@ class UserAuthViewModel @Inject constructor(
 
                     is UiState.Error ->{
                         _uiFPState.update { it.copy(isLoading = false,isSuccess = false, error = result.message) }
+                    }
+                }
+            }
+        }
+    }
+
+    fun getUserProfile() {
+        viewModelScope.launch {
+            var email = authPreferences.getUserName()?:"No"
+            registerUserUseCase.invoke(
+                email
+            ).collect { result ->
+                when (result) {
+                    is UiState.Loading ->{
+                        _uiProfileState.update { it.copy(isLoading = true) }
+                    }
+
+                    is UiState.Success ->{
+                        _uiProfileState.update { it.copy(isLoading = false, isSuccess = false, id = result.data.id, user_name = result.data.name,user_address = result.data.address,user_phone_number = result.data.phone,user_email = result.data.email,user_password = result.data.pwd)}
+                    }
+
+                    is UiState.Error ->{
+                        _uiProfileState.update { it.copy(isLoading = false,isSuccess = false, error = result.message) }
+                    }
+                }
+            }
+        }
+    }
+
+    fun updateUserProfile() {
+        viewModelScope.launch {
+            registerUserUseCase.invoke(
+                _uiProfileState.value.user_name,
+                _uiProfileState.value.user_address,
+                _uiProfileState.value.user_phone_number,
+                _uiProfileState.value.user_email,
+                _uiProfileState.value.user_password,
+            ).collect { result ->
+                when (result) {
+                    is UiState.Loading ->{
+                        _uiProfileState.update { it.copy(isLoading = true) }
+                    }
+
+                    is UiState.Success ->{
+                        _uiProfileState.update { it.copy(isLoading = false, isSuccess = true)}
+                    }
+
+                    is UiState.Error ->{
+                        _uiProfileState.update { it.copy(isLoading = false,isSuccess = false, error = result.message) }
                     }
                 }
             }

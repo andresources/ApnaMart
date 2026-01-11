@@ -43,7 +43,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -109,6 +111,13 @@ fun SideCategoryList(
                     MaterialTheme.colorScheme.onSurfaceVariant,
                 label = ""
             )
+            val textColor by animateColorAsState(
+                targetValue = if (selected)
+                    MaterialTheme.colorScheme.primary
+                else
+                    MaterialTheme.colorScheme.onSurfaceVariant,
+                label = ""
+            )
             //End
             Column(
                 modifier = Modifier.fillMaxWidth()
@@ -122,7 +131,9 @@ fun SideCategoryList(
                     else
                         Color.Transparent
                     )
-                    .clickable { onCategoryClick(category.id) }
+                    .clickable {
+                        onCategoryClick(category.id)
+                    }
                    .padding(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -167,7 +178,6 @@ fun CategoryGrid(items: List<CategoryItem>) {
 
 @Composable
 fun CategoryGridItem(item: CategoryItem) {
-
     Column(
         modifier = Modifier
             .padding(8.dp)

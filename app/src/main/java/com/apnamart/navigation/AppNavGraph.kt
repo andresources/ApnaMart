@@ -8,6 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import com.apnamart.feature_auth.presentation.ForgotPasswordScreen
 import com.apnamart.feature_auth.presentation.LoginScreen
 import com.apnamart.feature_auth.presentation.RegisterScreen
+import com.apnamart.feature_auth.presentation.UserProfileScreen
 import com.apnamart.feature_category.presentation.CategoryScreen
 import com.apnamart.feature_home.HomeScreen
 import com.apnamart.feature_splash.SplashScreen
@@ -63,10 +64,20 @@ fun AppNavGraph(
             )
         }
 
+        composable("category") {
+            CategoryScreen()
+        }
+
+        composable("profile") {
+            UserProfileScreen()
+        }
 
         composable("home") {
-           // HomeScreen("App")
-            CategoryScreen()
+           HomeScreen("App", goProfile = {
+               navController.navigate("profile")
+           }, goCategory = {
+               navController.navigate("category")
+           })
         }
     }
 }
