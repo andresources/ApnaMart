@@ -6,4 +6,5 @@ import retrofit2.http.GET
 interface UserScoreApi {
     @GET("ApartmentPrj/getUsersScore.php")
      suspend fun getUserScores(): List<UserScoreDto>
+
 }

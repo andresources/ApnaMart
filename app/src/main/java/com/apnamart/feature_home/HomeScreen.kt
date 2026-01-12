@@ -1,5 +1,6 @@
 package com.apnamart.feature_home
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,12 +19,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.apnamart.feature_auth.presentation.UserAuthViewModel
+import com.apnamart.feature_home.presentation.HomeViewModel
 import com.apnamart.feature_home.presentation.UserScoreViewModel
+import com.apnamart.feature_home.presentation.common.CarouselSectionViewType
+import com.apnamart.feature_home.presentation.common.GridSectionViewType
+import com.apnamart.feature_home.presentation.common.HeroSectionViewType
+import com.apnamart.feature_home.presentation.common.ViewType
 
 @Composable
-fun HomeScreen(name: String, modifier: Modifier = Modifier,viewModel: UserScoreViewModel = hiltViewModel(),goProfile: () -> Unit,goCategory: () -> Unit) {
-    val state by viewModel.uiState.collectAsState()
+fun HomeScreen(name: String, modifier: Modifier = Modifier,viewModel: UserScoreViewModel = hiltViewModel(),homeViewModel: HomeViewModel = hiltViewModel(),goProfile: () -> Unit,goCategory: () -> Unit) {
+    val state by homeViewModel.uiState.collectAsState()
     val internet by viewModel.isConnected.collectAsState()
+
+    val sections by homeViewModel.sections.collectAsState()
     LaunchedEffect(Unit){
         viewModel.loadUsersScore()
     }
@@ -37,11 +45,7 @@ fun HomeScreen(name: String, modifier: Modifier = Modifier,viewModel: UserScoreV
             modifier = Modifier.padding(innerPadding)
         ) {
             Column{
-                LazyColumn {
-                    items(state.userScore){ score ->
-                        Text(score.email)
-                    }
-                }
+
                 Button(onClick = {
                     viewModel.loadUsersScore()
                 }) {
@@ -54,6 +58,26 @@ fun HomeScreen(name: String, modifier: Modifier = Modifier,viewModel: UserScoreV
 
                 Button(onClick = goCategory) {
                     Text("Category")
+                }
+
+                LazyColumn {
+                    sections.forEach { section ->
+                        when (section.type) {
+                            ViewType.Hero -> item {
+                                HeroSectionViewType(section.items)
+                            }
+
+                            ViewType.Carousal -> item {
+                                CarouselSectionViewType(section.items)
+                            }
+
+                            ViewType.Grid -> item {
+                                GridSectionViewType(section.items){
+                                    Log.i("Dz99","$it")
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

@@ -5,8 +5,11 @@ import com.apnamart.feature_auth.data.remote.UserApi
 import com.apnamart.feature_auth.data.remote.repository.UserAuthRepositoryImpl
 import com.apnamart.feature_auth.domain.repository.UserAuthRepository
 import com.apnamart.feature_auth.domain.usecase.RegisterUserUseCase
+import com.apnamart.feature_home.data.HomeApi
 import com.apnamart.feature_home.data.UserScoreApi
+import com.apnamart.feature_home.data.repository.HomeRepositoryImpl
 import com.apnamart.feature_home.data.repository.UserScoreRepositoryImpl
+import com.apnamart.feature_home.domain.repository.HomeRepository
 import com.apnamart.feature_home.domain.repository.UserScoreRepository
 import com.apnamart.feature_home.domain.usecase.UserScoreUseCase
 import dagger.Module
@@ -23,6 +26,10 @@ object UsersScroreModule {
         retrofit.create(UserScoreApi::class.java)
 
     @Provides
+    fun provideHomeApi(retrofit: Retrofit): HomeApi =
+        retrofit.create(HomeApi::class.java)
+
+    @Provides
     fun provideUserScoreRepository(
         api: UserScoreApi,
         networkMonitor: NetworkMonitor
@@ -35,4 +42,11 @@ object UsersScroreModule {
         repository: UserScoreRepository
     ): UserScoreUseCase =
         UserScoreUseCase(repository)
+
+    @Provides
+    fun provideHomeRepository(
+        api: HomeApi,
+        networkMonitor: NetworkMonitor
+    ): HomeRepository =
+        HomeRepositoryImpl(api, networkMonitor)
 }
