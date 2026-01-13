@@ -17,6 +17,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.apnamart.feature_auth.presentation.UserAuthViewModel
 import com.apnamart.feature_home.presentation.HomeViewModel
@@ -27,7 +28,7 @@ import com.apnamart.feature_home.presentation.common.HeroSectionViewType
 import com.apnamart.feature_home.presentation.common.ViewType
 
 @Composable
-fun HomeScreen(name: String, modifier: Modifier = Modifier,viewModel: UserScoreViewModel = hiltViewModel(),homeViewModel: HomeViewModel = hiltViewModel(),goProfile: () -> Unit,goCategory: () -> Unit) {
+fun HomeScreen(name: String, modifier: Modifier = Modifier,viewModel: UserScoreViewModel = hiltViewModel(),homeViewModel: HomeViewModel = hiltViewModel()) {
     val state by homeViewModel.uiState.collectAsState()
     val internet by viewModel.isConnected.collectAsState()
 
@@ -36,17 +37,12 @@ fun HomeScreen(name: String, modifier: Modifier = Modifier,viewModel: UserScoreV
         viewModel.loadUsersScore()
     }
 
-    Scaffold(
-        containerColor = Color.Blue,
-        modifier = Modifier.safeContentPadding().fillMaxSize(),
-        topBar = { Text("Apna App")}
-    ) { innerPadding ->
         Box(
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(16.dp)
         ) {
             Column{
 
-                Button(onClick = {
+                /*Button(onClick = {
                     viewModel.loadUsersScore()
                 }) {
                     Text("Submit")
@@ -58,7 +54,7 @@ fun HomeScreen(name: String, modifier: Modifier = Modifier,viewModel: UserScoreV
 
                 Button(onClick = goCategory) {
                     Text("Category")
-                }
+                }*/
 
                 LazyColumn {
                     sections.forEach { section ->
@@ -68,7 +64,9 @@ fun HomeScreen(name: String, modifier: Modifier = Modifier,viewModel: UserScoreV
                             }
 
                             ViewType.Carousal -> item {
-                                CarouselSectionViewType(section.items)
+                                CarouselSectionViewType(section.items){
+                                    Log.i("Dz99","$it")
+                                }
                             }
 
                             ViewType.Grid -> item {
@@ -81,5 +79,4 @@ fun HomeScreen(name: String, modifier: Modifier = Modifier,viewModel: UserScoreV
                 }
             }
         }
-    }
 }

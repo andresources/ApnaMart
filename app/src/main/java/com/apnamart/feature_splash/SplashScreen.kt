@@ -31,7 +31,7 @@ fun SplashScreen(
         LaunchedEffect(it) {
             when (it) {
                 SplashDestination.Home -> {
-                    navController.navigate("home") {
+                    navController.navigate("main") {
                         popUpTo("splash") { inclusive = true }
                     }
                 }

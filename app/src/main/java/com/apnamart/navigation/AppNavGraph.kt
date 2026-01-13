@@ -12,6 +12,7 @@ import com.apnamart.feature_auth.presentation.UserProfileScreen
 import com.apnamart.feature_category.presentation.CartScreen
 import com.apnamart.feature_category.presentation.CategoryScreen
 import com.apnamart.feature_home.HomeScreen
+import com.apnamart.feature_main.MainScreen
 import com.apnamart.feature_splash.SplashScreen
 import com.google.gson.Gson
 
@@ -31,7 +32,7 @@ fun AppNavGraph(
         composable("login") {
             LoginScreen(
                 onLoginSuccess = {
-                    navController.navigate("home") {
+                    navController.navigate("main") {
                         popUpTo("login") { inclusive = true }
                     }
                 },
@@ -47,7 +48,7 @@ fun AppNavGraph(
         composable("register") {
             RegisterScreen(
                 onRegisterSuccess = {
-                    navController.navigate("home") {
+                    navController.navigate("main") {
                         popUpTo("register") { inclusive = true }
                     }
                 }
@@ -56,7 +57,7 @@ fun AppNavGraph(
         composable("forgot") {
             ForgotPasswordScreen(
                 onChangedSuccess = {
-                    navController.navigate("home") {
+                    navController.navigate("main") {
                         popUpTo("register") { inclusive = true }
                     }
                 },
@@ -80,12 +81,12 @@ fun AppNavGraph(
             CartScreen()
         }
 
+        composable("main") {
+            MainScreen()
+        }
+
         composable("home") {
-           HomeScreen("App", goProfile = {
-               navController.navigate("profile")
-           }, goCategory = {
-               navController.navigate("category")
-           })
+           HomeScreen("App")
         }
     }
 }

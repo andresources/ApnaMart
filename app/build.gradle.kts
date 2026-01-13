@@ -74,5 +74,14 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.1.1")
     implementation("io.coil-kt:coil-compose:2.6.0")
     implementation("com.google.accompanist:accompanist-placeholder-material:0.34.0")
+    // Material3
+    implementation("androidx.compose.material3:material3:1.2.1")
+
+    // Navigation
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+
+    // Icons
+    implementation("androidx.compose.material:material-icons-extended")
+    implementation("com.google.accompanist:accompanist-navigation-animation:0.34.0")
 
 }
