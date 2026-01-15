@@ -3,6 +3,7 @@ package com.apnamart.feature_home
 import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
@@ -20,15 +21,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.apnamart.feature_auth.presentation.UserAuthViewModel
+import com.apnamart.feature_home.domain.model.HomeModel
 import com.apnamart.feature_home.presentation.HomeViewModel
 import com.apnamart.feature_home.presentation.UserScoreViewModel
 import com.apnamart.feature_home.presentation.common.CarouselSectionViewType
 import com.apnamart.feature_home.presentation.common.GridSectionViewType
 import com.apnamart.feature_home.presentation.common.HeroSectionViewType
 import com.apnamart.feature_home.presentation.common.ViewType
+import com.apnamart.feature_main.HomeSharedViewModel
+import com.apnamart.feature_splash.SplashViewModel
 
 @Composable
-fun HomeScreen(name: String, modifier: Modifier = Modifier,viewModel: UserScoreViewModel = hiltViewModel(),homeViewModel: HomeViewModel = hiltViewModel()) {
+fun HomeScreen(viewModel: UserScoreViewModel = hiltViewModel(),homeViewModel: HomeViewModel = hiltViewModel(), homeSharedViewModel: HomeSharedViewModel,onItemSelected: (HomeModel) -> Unit) {
     val state by homeViewModel.uiState.collectAsState()
     val internet by viewModel.isConnected.collectAsState()
 
@@ -42,25 +46,15 @@ fun HomeScreen(name: String, modifier: Modifier = Modifier,viewModel: UserScoreV
         ) {
             Column{
 
-                /*Button(onClick = {
-                    viewModel.loadUsersScore()
-                }) {
-                    Text("Submit")
-                }
-
-                Button(onClick = goProfile ) {
-                    Text("Profile")
-                }
-
-                Button(onClick = goCategory) {
-                    Text("Category")
-                }*/
-
-                LazyColumn {
+                LazyColumn(contentPadding = PaddingValues(
+                    bottom = 90.dp
+                )) {
                     sections.forEach { section ->
                         when (section.type) {
                             ViewType.Hero -> item {
-                                HeroSectionViewType(section.items)
+                                HeroSectionViewType(section.items,homeSharedViewModel){ selectedItem ->
+                                    onItemSelected(selectedItem)
+                                }
                             }
 
                             ViewType.Carousal -> item {

@@ -1,7 +1,9 @@
 package com.apnamart.feature_splash
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.apnamart.core.domain.repository.EnvironmentApi
 import com.apnamart.data.local.AuthLocalDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -14,8 +16,11 @@ import javax.inject.Inject
 @HiltViewModel
 class SplashViewModel @Inject constructor(
     private val authPreferences: AuthLocalDataSource,
+    private val environmentApi: EnvironmentApi
 ) : ViewModel() {
-
+    init{
+        Log.i("Dz89","${environmentApi.getBuildType()}")
+    }
     private val _destination = MutableStateFlow<SplashDestination?>(null)
     val destination = _destination.asStateFlow()
 

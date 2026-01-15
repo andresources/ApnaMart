@@ -41,6 +41,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -59,6 +60,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.apnamart.feature_cart.presentation.CartViewModel
 import com.apnamart.feature_category.domain.model.CartItem
 import com.apnamart.feature_category.domain.model.Category
 import com.apnamart.feature_category.domain.model.CategoryItem
@@ -66,18 +68,22 @@ import com.apnamart.feature_category.domain.model.CategoryItem
 @Composable
 fun CategoryScreen(
     viewModel: CategoryViewModel = hiltViewModel(),
+    cartViewModel:CartViewModel,
     cartItems: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsState()
-    val cart by viewModel.cart.collectAsState()
-    val originalTotal by viewModel.originalTotal.collectAsState()
-    val offerTotal by viewModel.offerTotal.collectAsState()
+    val cart by cartViewModel.cart.collectAsState()
+    val originalTotal by cartViewModel.originalTotal.collectAsState()
+    val offerTotal by cartViewModel.offerTotal.collectAsState()
 
-    val differentRestaurent by viewModel.differentRestaurent.collectAsState()
+    val differentRestaurent by cartViewModel.differentRestaurent.collectAsState()
+    LaunchedEffect(Unit) {
+        viewModel.loadInitCategories()
+    }
     Column{
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = {
-            viewModel.saveCartItems()
+            cartViewModel.saveCartItems()
             cartItems()
         }) {
             Text("Cart : ${cart.size}")
@@ -103,7 +109,7 @@ fun CategoryScreen(
             Box(modifier = Modifier.weight(1f)) {
                 when {
                     state.isLoading -> ShimmerGrid()
-                    else -> CategoryGrid(items = state.items,viewModel,cart)
+                    else -> CategoryGrid(items = state.items,cart,cartViewModel= cartViewModel)
                 }
             }
         }
@@ -210,10 +216,13 @@ fun SideCategoryList(
 
 
 @Composable
-fun CategoryGrid(items: List<CategoryItem>,viewModel: CategoryViewModel,cart: List<CartItem>) {
+fun CategoryGrid(items: List<CategoryItem>,cart: List<CartItem>,cartViewModel:CartViewModel) {
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
+        contentPadding = PaddingValues(
+            bottom = 90.dp
+        ),
         modifier = Modifier.padding(8.dp)
     ) {
 
@@ -225,10 +234,10 @@ fun CategoryGrid(items: List<CategoryItem>,viewModel: CategoryViewModel,cart: Li
             CategoryGridItem(item,
                 quantity = qty,
                 onAdd = {
-                    viewModel.addToCart(item)
+                    cartViewModel.addToCart(item)
                 },
                 onRemove = {
-                    viewModel.removeFromCart(item.id)
+                    cartViewModel.removeFromCart(item.id)
                 }
             )
         }

@@ -1,7 +1,9 @@
 package com.apnamart.feature_home.presentation.common
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,10 +42,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.apnamart.feature_home.domain.model.HomeModel
+import com.apnamart.feature_main.HomeSharedViewModel
 import kotlinx.coroutines.delay
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun HeroSectionViewType(data: List<HomeModel>) {
+fun HeroSectionViewType(data: List<HomeModel>, homeSharedViewModel: HomeSharedViewModel, onItemSelected: (HomeModel) -> Unit) {
+
     Column{
         val listState = rememberLazyListState()
         val scope = rememberCoroutineScope()
@@ -66,31 +71,6 @@ fun HeroSectionViewType(data: List<HomeModel>) {
                 modifier = Modifier.padding(12.dp)
             )
             val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-            /*LazyRow(
-                state = listState,
-                flingBehavior = rememberSnapFlingBehavior(listState),
-                contentPadding = PaddingValues(horizontal = 8.dp)
-            ) {
-                items(data) { item ->
-                    HerorItem(
-                        item = item,
-                        modifier = Modifier.padding(4.dp)
-                            .width(screenWidth - 20.dp)   // 🔥 full page width
-                    )
-                }
-            }*/
-            /*LazyRow(
-                state = listState,
-                contentPadding = PaddingValues(horizontal = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(data) { item ->
-                    CarouselItem(
-                        item,
-                        modifier = Modifier.width(screenWidth - 16.dp)
-                    )
-                }
-            }*/
             LazyRow(
                 state = listState,
                 flingBehavior = rememberSnapFlingBehavior(listState),   // snap page
@@ -98,7 +78,10 @@ fun HeroSectionViewType(data: List<HomeModel>) {
             ) {
                 items(data) { item ->
                     Column(
-                        modifier = Modifier
+                        modifier = Modifier.clickable{
+                            homeSharedViewModel.updateSelectedItem(item)
+                            onItemSelected(item)
+                        }
                             .padding(horizontal = 8.dp)
                             .clip(RoundedCornerShape(8.dp))
                             .width(screenWidth-40.dp)      // 🔥 exactly screen width
@@ -109,7 +92,9 @@ fun HeroSectionViewType(data: List<HomeModel>) {
                             colors = CardDefaults.cardColors(
                                 containerColor = Color(0xFFFFFFFF)
                             ),
-                            modifier = Modifier.padding(4.dp).padding(4.dp),
+                            modifier = Modifier.clickable{
+                                onItemSelected(item)
+                            }.padding(4.dp).padding(4.dp),
                             border = BorderStroke(1.dp, color = Color(0xFFD7D7D7)),
                             shape = RoundedCornerShape(16.dp),
                             elevation = CardDefaults.cardElevation(1.dp)
