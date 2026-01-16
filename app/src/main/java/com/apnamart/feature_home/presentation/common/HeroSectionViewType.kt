@@ -68,7 +68,7 @@ fun HeroSectionViewType(data: List<HomeModel>, homeSharedViewModel: HomeSharedVi
                 "Fresh Vegetables",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(12.dp)
+                modifier = Modifier.padding(4.dp)
             )
             val screenWidth = LocalConfiguration.current.screenWidthDp.dp
             LazyRow(
@@ -82,7 +82,6 @@ fun HeroSectionViewType(data: List<HomeModel>, homeSharedViewModel: HomeSharedVi
                             homeSharedViewModel.updateSelectedItem(item)
                             onItemSelected(item)
                         }
-                            .padding(horizontal = 8.dp)
                             .clip(RoundedCornerShape(8.dp))
                             .width(screenWidth-40.dp)      // 🔥 exactly screen width
                             .height(220.dp),

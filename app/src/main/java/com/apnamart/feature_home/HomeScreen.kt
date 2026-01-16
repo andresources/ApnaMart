@@ -42,13 +42,16 @@ fun HomeScreen(viewModel: UserScoreViewModel = hiltViewModel(),homeViewModel: Ho
     }
 
         Box(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(8.dp)
         ) {
             Column{
 
                 LazyColumn(contentPadding = PaddingValues(
                     bottom = 90.dp
                 )) {
+                    item{
+                        ImageCarousel()
+                    }
                     sections.forEach { section ->
                         when (section.type) {
                             ViewType.Hero -> item {
