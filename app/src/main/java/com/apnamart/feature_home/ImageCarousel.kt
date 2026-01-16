@@ -21,28 +21,29 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.apnamart.feature_home.domain.model.HomeModel
 import kotlinx.coroutines.delay
 import kotlin.math.absoluteValue
 
 @Composable
-fun ImageCarousel(images: List<String> = listOf<String>(
-    "https://www.sakshi.com/styles/webp/s3/article_images/2026/01/16/Netherlands.jpg.webp",
-    "https://www.sakshi.com/styles/webp/s3/article_images/2026/01/16/ysjagan5.jpg.webp",
-    "https://www.sakshi.com/styles/webp/s3/article_images/2026/01/16/egpt.jpg.webp",
-    "https://www.sakshi.com/styles/webp/s3/article_images/2026/01/16/Netherlands.jpg.webp",
-    "https://www.sakshi.com/styles/webp/s3/article_images/2026/01/16/ysjagan5.jpg.webp",
-)) {
+fun ImageCarousel(data: List<HomeModel>) {
 
-    val pagerState = rememberPagerState { 5 }
+    val pagerState = rememberPagerState { data.size }
 
     LaunchedEffect(Unit) {
         while (true) {
@@ -72,18 +73,46 @@ fun ImageCarousel(images: List<String> = listOf<String>(
                         cameraDistance = 16 * density
                     }
             ) {
-                AsyncImage(
-                    model = images[page],
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
+                Box(Modifier.fillMaxWidth()) {
+                    AsyncImage(
+                        model = data[page].originalUrl,
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),    // fill page
+                        contentScale = ContentScale.Crop
+                    )
+                    Text("₹${data[page].productPrice-data[page].offerPrice} OFF", color = Color.Red,modifier = Modifier.background(shape = RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp), color = Color(0xFFFFFFFF)).padding(horizontal = 8.dp, vertical = 4.dp).align(Alignment.TopCenter))
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                Brush.verticalGradient(
+                                    listOf(Color.Transparent, Color.Transparent,Color.Black.copy(0.5f))
+                                )
+                            )
+                    )
+
+                    Spacer(Modifier.height(6.dp))
+                    Row(modifier = Modifier.padding(4.dp).align(Alignment.BottomStart),
+                        verticalAlignment = Alignment.CenterVertically
+                    ){
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(data[page].title, fontSize = 24.sp, fontWeight = FontWeight.Bold,color = Color.White)
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Row{
+                            Text("₹${data[page].offerPrice}", fontWeight = FontWeight.Bold, color =
+                                Color.White)
+                            Spacer(Modifier.width(4.dp))
+                            Text(
+                                "₹${data[page].productPrice}",
+                                textDecoration = TextDecoration.LineThrough,
+                                color = Color.White
+                            )
+                        }
+                    }
+
+                }
             }
         }
-        /*PagerIndicator(
-            pageCount = pagerState.pageCount,
-            currentPage = pagerState.currentPage
-        )*/
         Spacer(modifier = Modifier.height(8.dp))
         Row{
             Spacer(modifier = Modifier.weight(1f))
@@ -114,35 +143,6 @@ fun LinePagerIndicator(
                             MaterialTheme.colorScheme.primary
                         else
                             Color.LightGray
-                    )
-            )
-        }
-    }
-}
-
-
-fun lerp(start: Float, stop: Float, fraction: Float): Float {
-    return start + (stop - start) * fraction
-}
-
-
-@Composable
-fun PagerIndicator(
-    pageCount: Int,
-    currentPage: Int
-) {
-    Row(
-        horizontalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        repeat(pageCount) { index ->
-            Box(
-                modifier = Modifier
-                    .padding(4.dp)
-                    .size(if (index == currentPage) 10.dp else 8.dp)
-                    .clip(CircleShape)
-                    .background(
-                        if (index == currentPage) Color.Black else Color.LightGray
                     )
             )
         }

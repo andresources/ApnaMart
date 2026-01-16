@@ -50,14 +50,15 @@ fun HomeScreen(viewModel: UserScoreViewModel = hiltViewModel(),homeViewModel: Ho
                     bottom = 90.dp
                 )) {
                     item{
-                        ImageCarousel()
+
                     }
                     sections.forEach { section ->
                         when (section.type) {
                             ViewType.Hero -> item {
-                                HeroSectionViewType(section.items,homeSharedViewModel){ selectedItem ->
+                                /*HeroSectionViewType(section.items,homeSharedViewModel){ selectedItem ->
                                     onItemSelected(selectedItem)
-                                }
+                                }*/
+                                ImageCarousel(section.items)
                             }
 
                             ViewType.Carousal -> item {
