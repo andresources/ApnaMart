@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.ApnaMart" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/black</item>
+        <!-- Splash background -->
+        <item name="android:windowSplashScreenBackground">@color/green</item>
+
+        <!-- Center icon -->
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/transparent_vector</item>
+        <item name="android:windowSplashScreenAnimationDuration">30</item>
+
+        <!-- Remove white circle behind icon -->
+        <item name="android:windowSplashScreenIconBackgroundColor">
+            @android:color/transparent
+        </item>
+
+        <!-- Fix Pixel white strip -->
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:statusBarColor">@color/green</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>
