@@ -28,5 +28,15 @@ data class HomeDto(
     val offerPrice: String,
 
     @SerializedName("view_type")
-    val viewType: String
+    val viewType: String,
+
+    @SerializedName("tower")
+val tower: String,
+
+
+@SerializedName("platno")
+val platno: String,
+
+@SerializedName("dname")
+val dname: String
 )

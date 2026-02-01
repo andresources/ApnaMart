@@ -7,5 +7,8 @@ data class CartItem(
     val imageUrl: String,
     val quantity: Int,
     val offer_price: Int,
-    val original_price: Int
+    val original_price: Int,
+    val tower: String,
+    val platno: String,
+    val dname: String,
 )

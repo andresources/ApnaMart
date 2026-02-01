@@ -43,7 +43,9 @@ class CartViewModel @Inject constructor(
         _originalTotal.value = originalTotal
     }
 
-
+    fun clearCart(){
+        _cart.value = emptyList()
+    }
     fun addToCart(item: CategoryItem) {
         val newRestaurentAdded = cart.value.any {
             it.categoryId != item.categoryId
@@ -71,7 +73,10 @@ class CartViewModel @Inject constructor(
                     quantity = 1,
                     categoryId = item.categoryId,
                     original_price = item.original_price,
-                    offer_price = item.offer_price
+                    offer_price = item.offer_price,
+                    tower = item.tower,
+                    platno = item.platno,
+                    dname = item.dname
                 )
             }
         }

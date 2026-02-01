@@ -1,5 +1,6 @@
 package com.apnamart.feature_category.presentation
 
+import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -230,6 +231,7 @@ fun CategoryGrid(items: List<CategoryItem>,cart: List<CartItem>,cartViewModel:Ca
             key = { it.id }   // 🔥 required
         ) { item ->
             //val qty = viewModel.getQuantity
+            Log.i("Dz00","LID : ${item.id} - LcategoryId: ${item.categoryId}")
             val qty = cart.find { it.id == item.id }?.quantity ?: 0
             CategoryGridItem(item,
                 quantity = qty,

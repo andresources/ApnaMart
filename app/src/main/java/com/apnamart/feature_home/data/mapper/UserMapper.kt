@@ -25,6 +25,9 @@ fun HomeDto.toDomain(): HomeModel {
         categoryId = categoryId.toIntOrNull() ?: 0,
         productPrice = productPrice.toIntOrNull() ?: 0,
         offerPrice = offerPrice.toIntOrNull() ?: 0,
-        viewType = viewType
+        viewType = viewType,
+        tower = tower,
+        platno = platno,
+        dname = dname
     )
 }

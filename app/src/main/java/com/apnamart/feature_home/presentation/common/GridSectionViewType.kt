@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -76,6 +77,22 @@ fun GridItem(
                         .fillMaxWidth(),
                     contentScale = ContentScale.Crop
                 )
+
+                Row(
+                    modifier = Modifier.align(Alignment.BottomEnd).background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                Color(0x99000000), // Top
+                                Color(0x55000000)  // Bottom
+                            )
+                        )
+                    ).padding(4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    Text(text = "Tower : T2,", fontSize = 14.sp, fontWeight = FontWeight.Bold, lineHeight = 14.sp, color = Color.White)
+                    Text(text = "211", fontSize = 12.sp, fontWeight = FontWeight.Bold, lineHeight = 14.sp, color = Color.White)
+
+                }
 
                 if (item.discount > 0) {
                     Box(

@@ -41,6 +41,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.apnamart.core.presentation.components.TowerDetails
 import com.apnamart.feature_home.domain.model.HomeModel
 import com.apnamart.feature_main.HomeSharedViewModel
 import kotlinx.coroutines.delay
@@ -105,6 +106,10 @@ fun HeroSectionViewType(data: List<HomeModel>, homeSharedViewModel: HomeSharedVi
                                     modifier = Modifier.fillMaxSize(),    // fill page
                                     contentScale = ContentScale.Crop
                                 )
+                                Column(modifier = Modifier.align(Alignment.TopEnd)){
+                                    TowerDetails()
+                                }
+
                                 Text("₹${item.productPrice-item.offerPrice} OFF", color = Color.Red,modifier = Modifier.background(shape = RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp), color = Color(0xFFFFFFFF)).padding(horizontal = 8.dp, vertical = 4.dp).align(Alignment.TopCenter))
                                 Box(
                                     modifier = Modifier

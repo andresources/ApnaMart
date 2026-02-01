@@ -1,5 +1,6 @@
 package com.apnamart.feature_home_details
 
+import android.util.Log
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.BorderStroke
@@ -7,17 +8,21 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,6 +48,7 @@ import com.apnamart.feature_cart.presentation.CartViewModel
 import com.apnamart.feature_category.presentation.CategoryGrid
 import com.apnamart.feature_category.presentation.CategoryViewModel
 import com.apnamart.feature_home.domain.model.HomeModel
+import com.apnamart.feature_home.domain.model.homeToCategoryItem
 import com.apnamart.feature_main.CartIconStack
 import com.apnamart.feature_main.HomeSharedViewModel
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -51,6 +57,7 @@ fun HomeDetailsScreen(homeSharedViewModel: HomeSharedViewModel,categoryViewModel
     val item by homeSharedViewModel.selectedItem.collectAsState()
     val uiHomeCategoryState by categoryViewModel.uiState.collectAsState()
     val cart by cartViewModel.cart.collectAsState()
+    val qty = cart.find { it.id == item?.id }?.quantity ?: 0
     val originalTotal by cartViewModel.originalTotal.collectAsState()
     val offerTotal by cartViewModel.offerTotal.collectAsState()
     var showCart by remember{
@@ -63,23 +70,21 @@ fun HomeDetailsScreen(homeSharedViewModel: HomeSharedViewModel,categoryViewModel
             categoryViewModel.loadCategoryItems(it.categoryId)
         }
     }
-    Box(modifier = Modifier.padding(
+    Box(modifier = Modifier.background(Color.White).padding(
         bottom = 16.dp
     ).fillMaxSize()){
     Column {
-        if (differentRestaurent && cart.size > 0) {
-            Text("You are trying from different Restaurent")
-        }
         item?.let {
-            DetailImage(it)
+            DetailImage(it,cartViewModel,qty)
         }
-        Button(onClick = {
+        /*Button(onClick = {
             cartViewModel.saveCartItems()
-            //cartItems()
         }) {
             Text("Cart : ${cart.size}")
-        }
-
+        }*/
+        /*if (differentRestaurent && cart.size > 0) {
+            Text("You are trying from different Restaurent")
+        }*/
         CategoryGrid(items = uiHomeCategoryState.items, cart, cartViewModel)
 
     }
@@ -103,14 +108,13 @@ fun HomeDetailsScreen(homeSharedViewModel: HomeSharedViewModel,categoryViewModel
 }
 
 @Composable
-fun DetailImage(item: HomeModel){
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-
+fun DetailImage(item: HomeModel,cartViewModel: CartViewModel,quantity: Int){
+    Log.i("Dz00","ID : ${item.id} - categoryId: ${item.categoryId}")
     Column(
         modifier = Modifier.clickable{
             //homeSharedViewModel.updateSelectedItem(item)
             //onItemSelected(item)
-        }
+        }.padding(top = 32.dp)
             .padding(horizontal = 8.dp)
             .clip(RoundedCornerShape(8.dp))
             .fillMaxWidth()
@@ -135,18 +139,69 @@ fun DetailImage(item: HomeModel){
                     modifier = Modifier.fillMaxSize(),    // fill page
                     contentScale = ContentScale.Crop
                 )
-                Text("₹${item.productPrice-item.offerPrice} OFF", color = Color.Red,modifier = Modifier.background(shape = RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp), color = Color(0xFFFFFFFF)).padding(horizontal = 8.dp, vertical = 4.dp).align(Alignment.TopCenter))
+
+                //Text("${c}")
+                Text(
+                    "₹${item.productPrice - item.offerPrice} OFF",
+                    color = Color.Red,
+                    modifier = Modifier.background(
+                        shape = RoundedCornerShape(
+                            bottomStart = 8.dp,
+                            bottomEnd = 8.dp
+                        ), color = Color(0xFFFFFFFF)
+                    ).padding(horizontal = 8.dp, vertical = 4.dp).align(Alignment.TopCenter)
+                )
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(
                             Brush.verticalGradient(
-                                listOf(Color.Transparent, Color.Transparent,Color.Black.copy(0.5f))
+                                listOf(Color.Transparent, Color.Transparent, Color.Black.copy(0.5f))
                             )
                         )
                 )
+                if (quantity == 0) {
+                    Button(
+                        onClick = {
+                            cartViewModel.addToCart(item.homeToCategoryItem())
+                        },
+                        contentPadding = PaddingValues(0.dp),
+                        modifier = Modifier.padding(4.dp).align(Alignment.BottomEnd).height(28.dp)
+                    ) {
+                        Text("ADD", fontSize = 12.sp)
+                    }
+                } else {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(4.dp).align(Alignment.BottomEnd)
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(MaterialTheme.colorScheme.primary)
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                ) {
+                    IconButton(onClick = {
+                        cartViewModel.removeFromCart(item.id)
+                    }, modifier = Modifier.size(24.dp)) {
+                        Text("-", color = Color.White)
+                    }
+
+                    Text(
+                        text = quantity.toString(),//quantity.toString()
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 8.dp)
+                    )
+
+                    IconButton(
+                        onClick = {//onAdd
+                            cartViewModel.addToCart(item.homeToCategoryItem())
+                        },
+                        modifier = Modifier.size(24.dp)
+                    ) {
+                        Text("+", color = Color.White)
+                    }
+                }
+            }
                 Spacer(Modifier.height(6.dp))
-                Column(modifier = Modifier.align(Alignment.BottomStart)){
+                Column(modifier = Modifier.padding(8.dp).align(Alignment.BottomStart)){
                     Text(item.title, fontSize = 24.sp, fontWeight = FontWeight.Bold,color = Color.White)
                     Row{
                         Text("₹${item.offerPrice}", fontWeight = FontWeight.Bold, color =

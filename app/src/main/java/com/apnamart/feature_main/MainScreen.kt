@@ -115,6 +115,7 @@ import org.w3c.dom.Text
 @Composable
 fun MainScreen(homeSharedViewModel: HomeSharedViewModel, cartViewModel: CartViewModel,goToDetailsScreen: () -> Unit) {
     val cart by cartViewModel.cart.collectAsState()
+    val offerTotal by cartViewModel.offerTotal.collectAsState()
     val statusBarColors = mapOf(
         BottomNavItem.Home.route to Color(0xFF1976D2),     // Blue
         BottomNavItem.Category.route to Color(0xFFFF9800),// Orange
@@ -151,13 +152,47 @@ fun MainScreen(homeSharedViewModel: HomeSharedViewModel, cartViewModel: CartView
         }
     }
 
-    currentIndex = if(currentIndex == -1) 0 else currentIndex
+    currentIndex = if (currentIndex == -1) 0 else currentIndex
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
             .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            SwiggyTopBar(scrollBehavior,currentIndex,colors)
+            //SwiggyTopBar(scrollBehavior,currentIndex,colors)
+            TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = colors[currentIndex]
+                ),
+                title = {
+                    Column {
+                        cart?.firstOrNull()?.let { item ->
+                            Row {
+                                Text(
+                                    text = "Deliver From : ",
+                                    fontSize = 18.sp,
+                                    color = Color.White
+                                )
+                                Text(
+                                    text = "${item.tower}, ${item.platno}, ${item.dname}",
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                            }
+                        }
+
+                        Row {
+                            Text("Deliver To : ", fontSize = 16.sp, color = Color.White)
+                            Text(
+                                "Tower 2: 211, HarinathaReddy",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                        }
+                    }
+                })
+
         },
         bottomBar = {
             BottomBar(navController)
@@ -165,64 +200,83 @@ fun MainScreen(homeSharedViewModel: HomeSharedViewModel, cartViewModel: CartView
     ) { padding ->
         val currentIndex = items.indexOfFirst { it.route == currentRoute }
         val isForward = currentIndex > previousTabIndex
-        Box(modifier = Modifier.padding(padding)) {
-        NavHost(
-            navController = navController,
-            startDestination = BottomNavItem.Home.route,
-        ) {
-            items.forEach { item ->
-
-                composable(
-                    route = item.route,
-                    enterTransition = {
-                        if (isForward)
-                            slideInHorizontally { it } + fadeIn()
-                        else
-                            slideInHorizontally { -it } + fadeIn()
-                    },
-                    exitTransition = {
-                        if (isForward)
-                            slideOutHorizontally { -it } + fadeOut()
-                        else
-                            slideOutHorizontally { it } + fadeOut()
+        Column(modifier = Modifier.padding(padding)){
+            cart?.firstOrNull()?.let {
+                Row(modifier = Modifier.background(Color.Red), verticalAlignment = Alignment.CenterVertically){
+                    TextButton(onClick = {
+                        cartViewModel.clearCart()
+                    }) {
+                        Text(text = "Delete", fontWeight = FontWeight.Bold, color = Color.White, textDecoration = TextDecoration.Underline)
                     }
-                ) {
-                    when (item) {
-                        BottomNavItem.Home -> HomeScreen(homeSharedViewModel = homeSharedViewModel) { selectedItem ->
-                            homeSharedViewModel.updateSelectedItem(selectedItem)
-                            Log.i("Dz55", "selectedItem : ${selectedItem}")
-                            goToDetailsScreen.invoke()
+
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        "You can only select items from ${cart.get(0).tower}, ${cart.get(0).platno}.",
+                        color = Color.White,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
+            }
+        Box() {
+            NavHost(
+                navController = navController,
+                startDestination = BottomNavItem.Home.route,
+            ) {
+                items.forEach { item ->
+
+                    composable(
+                        route = item.route,
+                        enterTransition = {
+                            if (isForward)
+                                slideInHorizontally { it } + fadeIn()
+                            else
+                                slideInHorizontally { -it } + fadeIn()
+                        },
+                        exitTransition = {
+                            if (isForward)
+                                slideOutHorizontally { -it } + fadeOut()
+                            else
+                                slideOutHorizontally { it } + fadeOut()
                         }
+                    ) {
+                        when (item) {
+                            BottomNavItem.Home -> HomeScreen(homeSharedViewModel = homeSharedViewModel) { selectedItem ->
+                                homeSharedViewModel.updateSelectedItem(selectedItem)
+                                Log.i("Dz55", "selectedItem : ${selectedItem}")
+                                goToDetailsScreen.invoke()
+                            }
 
-                        BottomNavItem.Category -> CategoryScreen(cartViewModel = cartViewModel) {
+                            BottomNavItem.Category -> CategoryScreen(cartViewModel = cartViewModel) {
 
+                            }
+
+                            BottomNavItem.Cart -> CartScreen()
+                            BottomNavItem.Profile -> UserProfileScreen()
                         }
-
-                        BottomNavItem.Cart -> CartScreen()
-                        BottomNavItem.Profile -> UserProfileScreen()
                     }
                 }
-            }
 
-        }
-            if(cart.size > 0 && currentIndex < 2) {
+            }
+            if (cart.size > 0 && currentIndex < 2) {
                 showCart = true
-            }else{
+            } else {
                 showCart = false
             }
-            if(showCart){
+            if (showCart) {
 
-                    Row(
-                        modifier = Modifier.align(Alignment.BottomEnd).padding(8.dp)
-                            .fillMaxWidth(0.65f).padding(8.dp)
-                    ) {
-                        CartIconStack(cart,cartViewModel = cartViewModel)
-                    }
+                Row(
+                    modifier = Modifier.align(Alignment.BottomEnd).padding(8.dp)
+                        .fillMaxWidth(0.65f).padding(8.dp)
+                ) {
+                    CartIconStack(cart, cartViewModel = cartViewModel)
+                }
 
             }
 
         }
     }
+}
 }
 
 @Composable
@@ -368,19 +422,47 @@ fun SwiggyTopBar(scrollBehavior: TopAppBarScrollBehavior,cnt: Int, colors: List<
 
     LargeTopAppBar(
         title = {
-            Column {
-                Text("Deliver To", fontSize = 12.sp, color = Color.White)
-                Text("ReddyHarry, Hyderabad", fontWeight = FontWeight.Bold,color = Color.White)
-            }
-        },
-        actions = {
-            IconButton(onClick = {}) {
-                Icon(Icons.Default.ShoppingCart, null, tint = Color.White)
+            val collapsedFraction = scrollBehavior.state.collapsedFraction
+
+            Box(modifier = Modifier.background(Color.Gray)) {
+                // ✅ App Name (ONLY when collapsed)
+                if (collapsedFraction < 0.6f) {
+                   /* Text(
+                        text = "My App Name",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )*/
+                }
+
+                // ✅ Delivery details (ONLY when expanded)
+                    Column {
+                        Row {
+                            Text("Deliver From : ", fontSize = 18.sp, color = Color.White)
+                            Text(
+                                "Tower 1: 601, KrishnaSaiReddy",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                        }
+
+                        Row {
+                            Text("Deliver To : ", fontSize = 16.sp, color = Color.White)
+                            Text(
+                                "Tower 2: 211, HarinathaReddy",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                        }
+                    }
+
             }
         },
         scrollBehavior = scrollBehavior,
         colors = TopAppBarDefaults.largeTopAppBarColors(
-            containerColor = colors.get(cnt),      // 🔥 makes it immersive
+            containerColor = colors.get(cnt),
             scrolledContainerColor = colors.get(cnt)
         )
     )
@@ -487,7 +569,10 @@ fun CartSheetContent(
                         imageUrl = item.imageUrl,
                         categoryId = item.categoryId,
                         original_price = item.original_price,
-                        offer_price = item.offer_price
+                        offer_price = item.offer_price,
+                        tower = item.tower,
+                        platno = item.platno,
+                        dname = item.dname
                     )
                     cartViewModel.addToCart(categoryItem)
                 }) {
