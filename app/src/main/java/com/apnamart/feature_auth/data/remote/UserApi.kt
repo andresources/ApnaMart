@@ -49,5 +49,4 @@ interface UserApi {
         @Field("user_password") user_password: String,
     ): ResponseDto
 
-
 }

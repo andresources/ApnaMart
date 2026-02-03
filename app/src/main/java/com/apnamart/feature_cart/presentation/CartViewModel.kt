@@ -3,6 +3,8 @@ package com.apnamart.feature_cart.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.apnamart.data.local.AuthLocalDataSource
+import com.apnamart.feature_cart.data.dto.AddCartDto
+import com.apnamart.feature_cart.domain.usecases.CheckOutUseCase
 import com.apnamart.feature_category.domain.model.CartItem
 import com.apnamart.feature_category.domain.model.CategoryItem
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,6 +18,7 @@ import kotlin.times
 @HiltViewModel
 class CartViewModel @Inject constructor(
     private val authPreferences: AuthLocalDataSource,
+    private val checkOutUseCase: CheckOutUseCase,
 ) : ViewModel(){
     private val _cart = MutableStateFlow<List<CartItem>>(emptyList())
     val cart = _cart.asStateFlow()
@@ -41,6 +44,17 @@ class CartViewModel @Inject constructor(
             item.original_price * item.quantity
         }
         _originalTotal.value = originalTotal
+    }
+
+    fun checkOut(){
+        viewModelScope.launch {
+            var addCartDto =  AddCartDto(
+                items = cart.value
+            )
+            checkOutUseCase(addCartDto).collect {
+
+            }
+        }
     }
 
     fun clearCart(){

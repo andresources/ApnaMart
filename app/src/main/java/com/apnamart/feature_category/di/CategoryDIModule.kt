@@ -1,15 +1,10 @@
 package com.apnamart.feature_category.di
 
 import com.apnamart.core.network.di.NetworkMonitor
-import com.apnamart.feature_auth.data.remote.UserApi
-import com.apnamart.feature_auth.data.remote.repository.UserAuthRepositoryImpl
-import com.apnamart.feature_auth.domain.repository.UserAuthRepository
 import com.apnamart.feature_category.data.CategoryAPI
 import com.apnamart.feature_category.data.repository.CategoryRepositoryImpl
 import com.apnamart.feature_category.domain.repository.CategoryRepository
 import com.apnamart.feature_category.domain.usecases.CategoryUseCases
-import com.apnamart.feature_home.domain.repository.UserScoreRepository
-import com.apnamart.feature_home.domain.usecase.UserScoreUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
